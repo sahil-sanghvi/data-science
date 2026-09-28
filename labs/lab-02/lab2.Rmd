@@ -1,0 +1,100 @@
+---
+title: "Lab2_SahilSanghvi_V01039545"
+author: "Sahil Sanghvi"
+date: "2024-01-24"
+output: html_document
+---
+
+## Question 1
+
+```{r}
+
+#(a) Reading the csv file
+Fdata = read.csv("FlowerData.csv")
+
+#(b)Checking if Fdata is a matrix or data frame
+
+is.data.frame(Fdata)
+is.matrix(Fdata)
+
+# to check class
+class(Fdata)
+
+# to check structure
+str(Fdata)
+
+# (c)
+
+FlowerMatrix = as.matrix(Fdata[,2:3])
+head(FlowerMatrix,n = 3)
+
+# (d)
+
+colnames(FlowerMatrix) = c("Age (in days)","Height(in cm)")
+head(FlowerMatrix)
+
+# (e)
+rownames(FlowerMatrix) = Fdata$Individual
+head(FlowerMatrix)
+
+
+```
+
+## Question 2
+
+```{r}
+#(a)
+
+mean(FlowerMatrix[,1])
+
+#(b)
+
+mean(FlowerMatrix[,2])
+
+#(c)
+
+max(FlowerMatrix[,2])
+which.max(FlowerMatrix[,2])
+
+#.........
+#.........
+
+#(d)
+
+min(FlowerMatrix[,1])
+which.min(FlowerMatrix[,1])
+FlowerMatrix[which.min(FlowerMatrix[,1]),1]
+
+#..........
+#..........
+
+#(e)
+
+Fdata$Colour[which.max(FlowerMatrix[,2])]
+
+#.......
+
+Fdata$Colour[which.min(FlowerMatrix[,1])]
+
+```
+
+## Question 3
+
+```{r}
+
+#(a)
+
+# 1st issue: missing value in row 13 column Individual
+# 2nd issue: typo "pr" in row 11 column colour
+
+#(b)
+
+Fdata$Individual[13] = "m"
+Fdata$Colour[11] = "purple"
+
+
+
+```
+
+
+

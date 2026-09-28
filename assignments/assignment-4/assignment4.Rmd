@@ -1,0 +1,111 @@
+---
+title: "STAT123_ASSIGNMENT4_SANGHVI"
+author: "Sahil Sanghvi"
+date: "2024-03-26"
+output: html_document
+---
+## Question 1
+```{r}
+admission = read.csv("AdmissionPredict.csv")
+# a)
+library(ggplot2)
+library(gridExtra)
+
+plot1 = ggplot(admission, aes(x = TOEFL, y = Chance_of_Admit)) +
+  geom_point(shape = 1) + 
+  geom_smooth(method = lm, se = FALSE, size = 0.5) +
+  labs(x = "TOELF Score", y = "Chances of Admission")
+
+plot2 = ggplot(admission, aes(x = GRE, y = Chance_of_Admit)) +
+  geom_point(shape = 2) + 
+  geom_smooth(method = lm, se = FALSE, size = 0.5) +
+  labs(x = "GRE Score", y = "Chances of Admission")
+
+plot3 = ggplot(admission, aes(x = UGPA, y = Chance_of_Admit)) +
+  geom_point(shape = 3) + 
+  geom_smooth(method = lm, se = FALSE, size = 0.5) +
+  labs(x = "UGPA Score", y = "Chances of Admission")
+
+plot4 = ggplot(admission, aes(x = Univ_Rating, y = Chance_of_Admit)) +
+  geom_point(shape = 4) + 
+  geom_smooth(method = lm, se = FALSE, size = 0.5) +
+  labs(x = "Univ Rating", y = "Chances of Admission")
+
+plot5 = ggplot(admission, aes(x = SOP, y = Chance_of_Admit)) +
+  geom_point(shape = 5) + 
+  geom_smooth(method = lm, se = FALSE, size = 0.5) +
+  labs(x = "SOP Score", y = "Chances of Admission")
+
+plot6 = ggplot(admission, aes(x = LOR, y = Chance_of_Admit)) +
+  geom_point(shape = 6) + 
+  geom_smooth(method = lm, se = FALSE, size = 0.5) +
+  labs(x = "LOR Score", y = "Chances of Admission")
+
+grid.arrange(plot1,plot2,plot3,plot4,plot5,plot6, nrow = 2, ncol =3)
+
+# Method 2
+plots = list()
+admit = c("TOEFL","GRE","UGPA","Univ_Rating","SOP","LOR")
+for (ii in 1:length(admit)){
+  plots[[ii]] = ggplot(admission, aes_string(x = admit[ii], y = "Chance_of_Admit")) +
+    geom_point(shape = ii)
+}
+
+grid.arrange(plots[[1]],plots[[2]],plots[[3]],plots[[4]],plots[[5]],plots[[6]], nrow = 2, ncol = 3)
+
+# b) The relationship seems to be in a Non-Linear Relationship
+
+# c)
+full_model = lm( formula = Chance_of_Admit ~ TOEFL + GRE + UGPA + Univ_Rating + SOP + LOR, 
+                 data = admission)
+summary(full_model)
+# The model obtained is: (y is the chance of getting admitted)
+# y = -1.4138594 + 0.027534(TOFEL) + 0.0022761(GRE) + 0.1198749(UGPA) + 0.0060620(Univ_Rating) - 0.0019614(SOP) + 0.0227486(LOR)
+
+
+# d)
+# All the terms are not significant. Univ_Rating and SOP are the non significant variables because their p values are grater than 0.05 and should be removed from the model. 
+
+# e)
+new_model = lm( formula = Chance_of_Admit ~ TOEFL + GRE + UGPA + LOR, 
+                 data = admission)
+summary(new_model)
+# The model obtained is: (y is the chance of getting admitted)
+# y = -1.4630686 + 0.0029252(TOFEL) + 0.0023179(GRE) + 0.1228233(UGPA) + 0.0239713(LOR)
+
+
+# g)
+y = -1.4630686 + 0.0029252*(118) + 0.0023179*(335) + 0.1228233*(7.6) + 0.0239713*(4)
+y
+```
+## Question 2
+```{r}
+# Define the vectors
+age <- c(2, 3, 4, 5, 8, 12, 14, 17, 21, 28, 39, 50, 67, 83)
+run.time <- c(65, 58, 40, 37, 32, 26, 18, 16, 17, 17, 23, 29, 42, 59)
+
+# Load ggplot2 library
+library(ggplot2)
+
+# b) Plot the variables
+ggplot(data = data.frame(age = age, run.time = run.time), aes(x = age, y = run.time)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) # Add linear regression line to visualize the form of the relationship
+
+# c) Fit a linear regression model
+model <- lm(run.time ~ age)
+
+# Print out the model
+summary(model)
+
+# d) Predict run time for a 56-year-old person
+new_age <- 56
+predicted_time <- predict(model, newdata = data.frame(age = new_age))
+print(paste("Predicted run time for a 56-year-old person:", round(predicted_time, 2), "seconds"))
+
+# e) Calculate R-squared
+rsquared <- summary(model)$r.squared
+print(paste("R-squared value:", round(rsquared * 100, 2), "%"))
+
+```
+

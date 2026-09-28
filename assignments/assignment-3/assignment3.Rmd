@@ -1,0 +1,281 @@
+---
+title: "Assignment 3"
+author: "Sahil Sanghvi"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 1
+```{r}
+# (a)
+
+library(ggplot2)
+
+data <- read.csv("homework3Data.csv")
+
+# Define histogram function with required features
+histogram_with_features <- function(data, variable) {
+  ggplot(data, aes(x = !!sym(variable))) +
+    geom_histogram(aes(y = after_stat(density)),
+                   color = "black",
+                   fill = "gray",
+                   alpha = 0.5) +
+    geom_density(color = "green") +
+    geom_vline(aes(xintercept = mean(!!sym(variable)), color = "Mean"), 
+               linetype = "dashed", linewidth = 1) +
+    geom_vline(aes(xintercept = median(!!sym(variable)), color = "Median"), 
+               linetype = "dashed", linewidth = 1) +
+    scale_color_manual(values = c("red", "blue")) +
+    labs(title = paste("Histogram of", variable),
+         x = variable,
+         y = "Density") +
+    theme_minimal()
+}
+
+# Create histograms for each variable
+hist_A <- histogram_with_features(data, "A")
+hist_B <- histogram_with_features(data, "B")
+hist_C <- histogram_with_features(data, "C")
+hist_X <- histogram_with_features(data, "X")
+hist_Y <- histogram_with_features(data, "Y")
+hist_Z <- histogram_with_features(data, "Z")
+
+# Output histograms
+hist_A
+hist_B
+hist_C
+hist_X
+hist_Y
+hist_Z
+
+# (b)
+print("The variable X is normally distributed, You can see that the histogram plotted for X has a bell shaped density curve which shows normal distribution.")
+
+# (c)
+
+# Part 1(c): Determining Intervals for Variable X
+
+# Calculate mean and standard deviation of variable X
+mean_X <- mean(data$X)
+sd_X <- sd(data$X)
+
+# Calculate intervals using the 68-95-99.7 rule
+interval_68 <- c(mean_X - sd_X, mean_X + sd_X)
+interval_95 <- c(mean_X - 2 * sd_X, mean_X + 2 * sd_X)
+interval_997 <- c(mean_X - 3 * sd_X, mean_X + 3 * sd_X)
+
+# Output intervals
+cat("68% interval:", interval_68, "\n")
+cat("95% interval:", interval_95, "\n")
+cat("99.7% interval:", interval_997, "\n")
+
+# Calculate intervals using the quantile() function
+quantile_intervals <- quantile(data$X, probs = c(0.0015, 0.025, 0.975, 0.9985))
+
+# Output quantile intervals
+cat("Quantile intervals:", quantile_intervals, "\n")
+
+# Calculate intervals using qnorm() function
+qnorm_intervals <- mean_X + sd_X * qnorm(c(0.0015, 0.025, 0.975, 0.9985))
+
+# Output qnorm intervals
+cat("qnorm intervals:", qnorm_intervals, "\n")
+
+
+# (d): Using the quantile() function to approximate intervals
+
+# Calculate quantiles for 68%, 95%, and 99.7%
+quantiles <- quantile(data$X, probs = c(0.0015, 0.025, 0.975, 0.9985))
+
+# Calculate intervals
+interval_68_quantile <- quantiles[2:3]
+interval_95_quantile <- quantiles[1:4]
+interval_997_quantile <- quantiles[c(1, 4)]
+
+# Output quantile intervals
+cat("68% quantile interval:", interval_68_quantile, "\n")
+cat("95% quantile interval:", interval_95_quantile, "\n")
+cat("99.7% quantile interval:", interval_997_quantile, "\n")
+
+
+# (e)
+qnorm(c(0.16,0.84), mean = mean(data$X), sd = sd(data$X))
+qnorm(c(0.025,0.975), mean = mean(data$X), sd = sd(data$X))
+qnorm(c(0.0015,0.9985), mean = mean(data$X), sd = sd(data$X))
+# Theses intervals are closer to the interval in part(c)
+
+# (f)
+m = mean(data$X)
+print(paste("an estimate for the population mean is",m))
+s = sd(data$X)
+n = length(data$X)
+ese = s/sqrt(n)
+print(paste("the estimated standard error of the statistic is",ese))
+conflevel = 0.86
+q = (conflevel+1)/2
+cv = qnorm(q)
+print(paste("the critical value for an 86% confidence interval is",cv))
+moe = cv*ese
+lower_lim = m - moe
+upper_lim = m + moe
+print(paste("A 88% confidence interval for the population mean is",lower_lim,"to",upper_lim))
+
+
+```
+## Question 2
+```{r}
+# Create population vector
+# (a)
+pop <- c(1:50)
+
+# Compute mean and standard deviation of pop
+pop_mean <- mean(pop)
+pop_sd <- sd(pop)
+
+# (b)
+# Set seed
+set.seed(12345)
+
+# Take sample from pop
+samp <- sample(pop, 100, replace = TRUE)
+samp
+
+# (c)
+# Compute confidence interval
+alpha <- 0.05
+samp_mean <- mean(samp)
+samp_se <- pop_sd / sqrt(length(samp))
+z_critical <- qnorm(1 - alpha/2)
+lower_bound <- samp_mean - z_critical * samp_se
+upper_bound <- samp_mean + z_critical * samp_se
+
+# Check if computed confidence interval contains the population mean
+contains_pop_mean <- pop_mean %in% c(lower_bound, upper_bound)
+
+# Repeating the process 5000 times
+num_intervals_containing_pop_mean <- 0
+set.seed(12345)
+for (i in 1:5000) {
+  samp <- sample(pop, 100, replace = TRUE)
+  samp_mean <- mean(samp)
+  samp_se <- pop_sd / sqrt(length(samp))
+  z_critical <- qnorm(1 - alpha/2)
+  lower_bound <- samp_mean - z_critical * samp_se
+  upper_bound <- samp_mean + z_critical * samp_se
+  if (pop_mean >= lower_bound && pop_mean <= upper_bound) {
+    num_intervals_containing_pop_mean <- num_intervals_containing_pop_mean + 1
+  }
+}
+
+# Print results
+print("Population mean:")
+print(pop_mean)
+
+print("Population standard deviation:")
+print(pop_sd)
+
+print("Confidence interval:")
+print(paste("Lower bound:", lower_bound))
+print(paste("Upper bound:", upper_bound))
+
+print("Does the computed confidence interval contain the population mean?")
+print("Yes")
+
+print("Estimated number of confidence intervals containing the population mean out of 5000:")
+print(num_intervals_containing_pop_mean)
+
+m1 = mean(samp)
+s1 = sd(samp)
+n1 = length(samp)
+ese = s1/sqrt(n1)
+conflevel1 = 0.95
+q1 = (conflevel1+1)/2
+cv1 = qnorm(q1)
+moe1 = cv1 * ese
+lower_lim1 = m1 - moe1
+upper_lim1 = m1 + moe1
+print(paste("A 95% confidence interval for the population mean is",lower_lim1,"to",upper_lim1))
+
+
+
+
+```
+
+## Question 3
+
+```{r}
+
+library(dplyr)
+
+# view(starwars)
+# 3a
+names = starwars$name
+
+# 3b
+nchar(names[c(7,19,31)])
+
+# 3c
+num_char = numeric()
+for (i in 1:length(names)){
+  num_char[i] = nchar(names[i])
+}
+
+# 3d
+# using lapply
+num_char1 = unlist(lapply(names,nchar))
+num_char1
+# using sapply
+num_char2 = sapply(names,nchar)
+
+
+```
+
+## Question 4
+
+```{r}
+# Load necessary libraries
+library(ggplot2)
+library(dplyr)
+
+# Load the dataset
+data <- read.csv("homework3Data.csv")
+
+# Extract the variable Y
+Y <- data$Y
+
+# Set seed for reproducibility
+set.seed(12345)
+
+# (a) Bootstrap computing the median on 10,000 samples (with replacement) of size 100 of the variable Y
+n_bootstrap <- 10000
+bootstrap_medians <- replicate(n_bootstrap, {
+  sample_Y <- sample(Y, 100, replace = TRUE)
+  median(sample_Y)
+})
+
+# (b) Plot the resulting sampling distribution for the median of Y with ggplot2
+ggplot(data.frame(medians = bootstrap_medians), aes(x = medians)) +
+  geom_histogram(bins = 30, fill = "skyblue", color = "black", alpha = 0.7) +
+  labs(title = "Sampling Distribution of the Median of Y",
+       x = "Median",
+       y = "Frequency")
+
+# (c) Determine an estimate for the median of Y
+median_estimate <- median(Y)
+median_estimate
+
+# (d) Find a 95% bootstrap confidence interval for the median of Y
+lower_bound <- quantile(bootstrap_medians, 0.025)
+upper_bound <- quantile(bootstrap_medians, 0.975)
+
+# Print the confidence interval
+print(paste("95% Bootstrap Confidence Interval for the Median of Y:", lower_bound, "-", upper_bound))
+
+
+
+```
+

@@ -1,0 +1,121 @@
+---
+title: "Lab 8"
+author: "Sahil Sanghvi"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+
+```
+
+## 1. Read in data file and set up data frame for analysis.
+
+```{r}
+
+realestate <- read.csv("RealEstate.csv")
+head(realestate)
+
+#1a.
+colnames(realestate)
+house <- realestate[,c("X2.house.age","X3.distance.to.the.nearest.MRT.station",
+                       "X4.number.of.convenience.stores","Y.house.price.of.unit.area")]
+head(house)
+
+#1b.
+house <- house %>% rename(age = "X2.house.age", mrt.dist = "X3.distance.to.the.nearest.MRT.station",
+                 num.conv.stores = "X4.number.of.convenience.stores", 
+                 price = "Y.house.price.of.unit.area")
+head(house)
+
+# You can also use dplyr to do this.
+
+```
+
+```{r}
+
+#1c price vs age
+library(ggplot2)
+ggplot(house, aes(x= age, y= price)) + 
+  geom_point(shape = 1) +
+  geom_smooth(method = lm,  # add linear regression line
+              se = FALSE) + # Don't add shaded confidence
+  ggtitle("Scatter Plot for price vs age") + labs(x= "Age",y ="Price")
+
+```
+
+
+
+```{r}
+
+#1c price vs distance to mrt station
+
+ggplot(house, aes(x= mrt.dist, y= price)) + 
+  geom_point(shape = 1) +
+  geom_smooth(method = lm,  # add linear regression line
+              se = FALSE) + # Don't add shaded confidence
+  ggtitle("Scatter Plot for price vs Distance from MRT Stattion") +
+  labs(x= "Diatance",y ="Price")
+
+```
+
+
+```{r}
+
+#1c price vs no. of convenience stores nearby
+
+ggplot(house, aes(x= num.conv.stores, y= price)) + 
+  geom_point(shape = 1) +
+  geom_smooth(method = lm,  # add linear regression line
+              se = FALSE) + # Don't add shaded confidence
+  ggtitle("Scatter Plot for price vs no. of conv. stores") + 
+  labs(x= "No.of.convenience.stores",y ="Price")
+
+```
+
+```{r}
+
+#1d Brief discussion about the plots
+
+# The price vs age graph shows negative linear regression line. i.e, as the age of the house increases the price is negatively affected.
+# The price vs distance graph shows negative linear regression line, i.e, as the distance from the MTR station increases the price decreases.
+# The price vs No. of convenience Stores graph shows negative linear regression line, i.e, as the number of convenience stores increases the price also increases
+
+```
+
+## 2. Individual correlations.
+
+```{r}
+cor(house$age,house$price)
+# We can also use dplyr function
+house |> summarize(cor_age_price = cor(age,price))
+house |> summarize(cor_mrt.dist_price = cor(mrt.dist,price))
+house |> summarize(cor_num.conv.stores_price = cor(num.conv.stores,price))
+
+# Also get it through a single command
+house %>%
+  cor(y = house$price, method = "pearson") %>%
+  round(3)
+```
+
+## 3. Correlation matrix for all variables.
+
+```{r}
+cor(house)
+
+# The y = house specification asks R to compute all correlations in the house
+# data frame.
+house %>%
+  cor(y = house,method = "pearson")
+
+house %>%
+  cor() %>%
+  round(3)
+# The correlation coefficent between number of convenience stores and distance
+# to mrt station is -0.603
+
+
+```
+

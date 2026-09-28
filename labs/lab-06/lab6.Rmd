@@ -1,0 +1,126 @@
+---
+title: "Lab 6"
+author: "Sahil Sanghvi"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 1
+
+Normal critical values for difference confidence interval.
+
+```{r}
+
+library(stats)
+
+#(a) 80%
+# Calculate normal critical value for 80% confidence level
+critical_value_80 <- qnorm(0.9)
+cat("Critical value for 80% confidence level:", critical_value_80, "\n")
+
+
+
+#(b) 85%
+# Calculate normal critical value for 85% confidence level
+critical_value_85 <- qnorm(0.925)
+cat("Critical value for 85% confidence level:", critical_value_85, "\n")
+
+
+#(c) 99% 
+
+# Calculate normal critical value for 99% confidence level
+critical_value_99 <- qnorm(0.995)
+cat("Critical value for 99% confidence level:", critical_value_99, "\n")
+
+
+
+```
+
+## Question 2
+
+Assigning a letter grade to student Henry.
+
+```{r}
+
+#load the appropriate library
+
+library(dplyr)
+
+#read in the data file
+grades123 <- read.csv("grades.csv")
+
+#(a)
+
+finalscore <- grades123 %>%
+  mutate(final = midterm * 0.4 + exam * 0.6)
+#(b)
+
+x <- finalscore$final[8]
+x
+
+#(c) Assigning Henry's grade.
+
+letter.grade = NULL
+if (x >= "90") {
+  cat("Henry's grade: A\n")
+  letter.grade <- "A"
+} else if (x >= 80 && x < 90) {
+  cat("Henry's grade: B\n")
+    letter.grade <- "B"
+
+} else if (x >= 70 && x < 80) {
+  cat("Henry's grade: C\n")
+    letter.grade <- "C"
+
+} else if (x >= 60 && x < 70) {
+  cat("Henry's grade: D\n")
+    letter.grade <- "D"
+
+} else {
+  cat("Henry's grade: F\n")
+    letter.grade <- "F"
+
+}
+
+
+letter.grade
+
+```
+
+## Question 3: While loop
+
+```{r}
+
+#(a)
+
+num <- sample(1:20, 100, replace = TRUE)
+
+num
+
+#(b)
+
+i <- 1
+found <- FALSE
+
+while (i <= length(num) && !found) {
+  if (num[i] == 5) {
+    cat("The first 5 appears in position number", i, "of the vector num.\n")
+    found <- TRUE
+  }
+  i <- i + 1
+}
+
+if (!found) {
+  cat("The number 5 is not in the vector num.\n")
+}
+
+
+
+
+
+```
+

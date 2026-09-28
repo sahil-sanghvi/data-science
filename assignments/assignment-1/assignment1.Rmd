@@ -1,0 +1,115 @@
+---
+title: "Assignment 1"
+author: "Sahil Sanghvi"
+date: "2024-02-01"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 1
+
+(a) Population will be the pumpkin seeds planted in her farm
+    Variable of interest will be the number of pumpkins that grow successfully
+    
+(b) Convience sample would a sample patch of land closet to her house
+
+(c) Simple Random Sample would be randomly choosing pumpkins around the field
+
+(d) Stratified Random Sample would be dividing the farm into subsections and randomly choosing a certain number of pumpkins from       each of the section
+
+(e) Population parameter of interest are the proportion of pumpkins that grow successfully and those that don't.
+
+## Question 2 
+
+
+
+```{r}
+
+# (a)
+
+# (a) Using the help function, We can see that the lynx dataset tells us about the annual canadian lynx trappings from 1821 to 1934. Using the class and str functions we can find about its structure type and class type.
+
+#Checking if lynx is a matrix or data frame
+
+is.data.frame(lynx)
+is.matrix(lynx)
+
+# to check class
+class(lynx)
+
+# to check structure
+str(lynx)
+
+# using summary function to show information about lynx data structure
+
+summary(lynx)
+
+# (b)
+
+years = as.character(1821:1934)
+
+# (c)
+names(lynx) = years
+
+
+# (d)
+temp = lynx["1867"]
+
+cat("There were",temp,"lynx caught in the year 1867")
+
+# (e)
+
+mean(lynx[1:80])
+
+```
+## Question 3
+
+```{r}
+
+# (a)
+casino = read.csv("casino.csv")
+
+# (b)
+
+head(casino)
+
+# (c)
+
+friends = casino$Name
+
+# (d)
+
+winnings = as.matrix(casino[,2:6])
+
+# (e)
+
+totals = rowSums(winnings)
+
+# (f)
+names(totals) = friends
+
+totals
+
+# (g)
+
+winner = which.max(totals)
+
+cat("Friend who won the most amount of money is",friends[winner])
+
+loser = which.min(totals)
+
+cat("Friend who lost the most amount of money is",friends[loser])
+
+# (h)
+
+avg = mean(totals)
+
+cat("The average amount the group won was",avg)
+
+```
+
+
+

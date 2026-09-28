@@ -1,0 +1,159 @@
+---
+title: "Assignment 2"
+author: "Sahil Sanghvi"
+date: "2024-02-16"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 1
+
+Download the data sets Superstores.csv and save them to whatever directory you are using
+for this course. Load the tidyverse package. This will load both dplyr and ggplot2 packages.
+Read in the file and save it as a data frame super. This data set contents information about
+customer orders. Take a look at the data frame to familiarize yourself with its contents. It
+is a typical data set with lots of variables. Note that the column ”Row ID” is not a variable.
+It’s an identifier, or an index.
+
+```{r}
+
+# Load necessary libraries
+library(tidyverse)
+
+# 1. Read the Superstores.csv file and save it as a data frame 'super'
+super <- read.csv("Superstores.csv")
+
+# Check the structure of the dataframe
+str(super)
+
+# (a) Total Sales for the Category "Office Supplies"
+office_supplies_sales <- super %>%
+  filter(Category == "Office Supplies") %>%
+  summarise(total_sales = sum(Sales))
+
+print(office_supplies_sales)
+
+# (b) Create a new data frame containing only orders for California
+superCali <- super %>%
+  filter(State == "California")
+
+# Show a few observations from superCali
+head(superCali)
+
+# (c) Bar graph of order counts by Regions
+order_counts_by_region <- super %>%
+  group_by(Region) %>%
+  summarise(order_count = n())
+
+# Basic bar graph
+ggplot(order_counts_by_region, aes(x = Region, y = order_count, fill = Region)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Order Counts by Region") +
+  theme_minimal()
+
+
+```
+
+## Question 2
+The following question deals with the data set Government expenditure per student.csv, which
+you will need to download from the Brightspace assignment page.
+
+```{r}
+
+# Load necessary libraries
+library(ggplot2)
+
+# 1. Read the "Government expenditure per student.csv" file
+gov_exp_per_student <- read.csv("Government_expenditure_per_student.csv")
+
+# (a) Create a histogram displaying the distribution of the variable Value
+
+ggplot(gov_exp_per_student, aes(x = Value, fill = "")) + 
+  geom_histogram(fill = "green",color = "black") + 
+  ggtitle("Goverment Expense Per Students") +
+  labs(x ="Expense", y = "No.Of.Countries") 
+
+# (b) Describe the shape of the distribution
+# Determine whether the distribution is symmetric, left-skewed, or right-skewed based on the histogram plot.
+
+cat("The distribution is right skewed")
+
+# (c) Compute the appropriate center value and corresponding measures of variability
+# You can compute the mean, median, and standard deviation to describe the center and spread of the distribution.
+
+ggplot(gov_exp_per_student, aes(x = Value, fill = "")) + 
+  geom_histogram(fill = "green",color = "black") + 
+  ggtitle("Goverment Expense Per Students") +
+  labs(x ="Expense", y = "No.Of.Countries") + 
+  geom_vline(xintercept = median(gov_exp_per_student$Value), linetype = "dashed", size = 2.0)
+
+
+# (d) Compute the trimmed mean of the data
+trimmed_mean <- mean(gov_exp_per_student$Value, trim = 0.05)
+trimmed_mean
+
+
+```
+
+## Question 3
+
+During lecture, I mentioned that there is no ”geom pie” command in ggplot2 to product a
+pie chart. However, there is a way to acheive that. Use your research skill, find out how and
+use the data set from the file ”rawgrades.csv” in the ”Skeleton Notes” folder to generate a
+pie chart. Your pie chart should have the following:
+
+(a) A title;
+(b) A label for each category;
+(c) Different colours for different pies;
+(d) The percentage for each category.
+
+
+```{r}
+
+# Load necessary libraries
+library(ggplot2)
+
+# Read the data
+rawgrades <- read.csv("rawgrades.csv")
+
+# Create a summary of grades
+grades_summary <- table(rawgrades$Grade)
+
+# Convert summary to data frame
+grades_summary_df <- as.data.frame(grades_summary)
+colnames(grades_summary_df) <- c("Grade", "Count")
+
+# Calculate percentage
+grades_summary_df$Percentage <- grades_summary_df$Count / sum(grades_summary_df$Count) * 100
+
+# Create a pie chart (Without pertentages in piechart)
+pie_chart <- ggplot(grades_summary_df, aes(x = "", y = Percentage, fill = Grade)) +
+  geom_bar(stat = "identity") +
+  coord_polar(theta = "y") +
+  labs(title = "Distribution of Grades",
+       fill = "Grade",
+       y = "Percentage") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+# pie chart (With pertentages in piechart)
+grades_summary_df %>%
+  mutate(perc =scales::percent(Count/sum(Count))) %>%
+  arrange(desc(Grade)) %>%
+  mutate(pos = cumsum(Count)- Count/2) %>%
+  ggplot(aes(x = "", y = Count, fill = factor(Grade) )) +
+  geom_bar(width = 1, stat = "identity") +
+  coord_polar("y", start = 0) +
+  ggrepel::geom_label_repel(aes(x = "", y = pos, label = perc), size=5, show.legend = F, nudge_x = 1) +
+  guides(fill = guide_legend(title = "Group"))
+
+# Display the pie chart
+print(pie_chart)
+
+```
+
+
+

@@ -1,0 +1,119 @@
+---
+title: "Lab 4"
+author: "Sahil Sanghvi"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+#make sure the command is present in your worksheet.
+library(tidyverse)   
+
+```
+
+## Question 1
+
+Type "?iris" to find out what the data set is about.
+
+```{r}
+data("iris")
+#?iris
+#a. Select the first three columns of the iris dataset using their column names. 
+#   HINT: Use select().
+colnames(iris)
+first3 = select(iris, Sepal.Length:Petal.Length)
+head(first3,3)
+
+#b. Select all the columns of the iris dataset except “Petal Width”. HINT: Use ′−′.
+head(select(iris, -Petal.Width),3)
+
+#c) Select all columns of the iris dataset that start with the character string “P”.
+head(select(iris, starts_with("P")),3)
+
+
+#d) Filter the rows of the iris dataset for Sepal.Length ≥ 4.6 and Petal.Width ≥ 0.5.
+head(filter(iris,Sepal.Length >= 4.6, Petal.Width >= 0.5),3)
+
+#e) Pipe the iris data frame to the function that will select two columns 
+#   (Sepal.Width and Sepal.Length). HINT: Use pipe operator.
+iris %>% select(Sepal.Width, Sepal.Length) %>% head(3)
+
+
+#f) Arrange rows by a particular column, such as the Sepal.Width. 
+#   HINT: Use arrange().
+iris %>% arrange(Sepal.Width) %>% head(3)
+
+
+#g) Select three columns from iris, arrange the rows by Sepal.Length, then 
+#   arrange the rows by Sepal.Width.
+iris %>%
+  select(Species, Sepal.Length, Sepal.Width) %>%
+  arrange(Sepal.Length, Sepal.Width) %>%
+  head()
+
+
+#h) Create a new column called proportion, which is the ratio of Sepal.Length to 
+#   Sepal.Width. HINT: Use mutate().
+iris %>%
+  mutate(proportion = Sepal.Length / Sepal.Width) %>%
+  head()
+
+
+#i) Compute the average number of Sepal.Length, apply the mean() function to 
+#   the column Sepal.Length, and call the summary value “avg_slength”. 
+#   HINT: Use summarize().
+iris %>%
+  summarise(avg_slength = mean(Sepal.Length))
+
+#j) Split the iris data frame by the Sepal.Length, then ask for the same 
+#   summary statistics as above. 
+#   HINT: Use group by().
+iris %>%
+  group_by(Sepal.Length) %>%
+  summarise(avg_slength = mean(Sepal.Length) ,
+            min_slength = min(Sepal.Length) ,
+            max_slength = max(Sepal.Length),
+            total = n())
+
+
+```
+
+## Question 2
+
+Install the "palmerpenguins" package first.
+
+```{r}
+
+#install.packages("palmerpenguins")
+library(palmerpenguins)
+data("penguins")
+
+#a.
+head(penguins)
+glimpse(penguins)
+str(penguins)
+
+#b.
+# specify the width of the bins to suit your need
+
+ggplot(penguins, aes(x= body_mass_g)) +
+  geom_histogram(fill = "steelblue", color = "black") +
+  ggtitle("Distribution of Penguiun Body Mass") +
+  labs(x= "Body Mass in grams") +
+  geom_vline(xintercept = mean(penguins$body_mass_g, na.rm = TRUE), linetype = "dashed", linewidth = 1.0)
+  
+
+
+```
+
+## Question 3
+
+```{r}
+ggplot(penguins, mapping = aes(x= flipper_length_mm, y = body_mass_g)) + geom_line()
+
+# Scatter plot 
+ggplot(penguins, mapping = aes(x= flipper_length_mm, y = body_mass_g)) + geom_point()
+
+```
