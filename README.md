@@ -43,8 +43,7 @@ Each file expects its CSV(s) in the same directory (already colocated per folder
 
 ## 🎓 Project Context
 
-Built as part of **STAT 123: Applied Statistics for Computer Science** at the
-University of Victoria.
+Built as part of **STAT 123: Data Science** at the University of Victoria.
 
 ## ⚠️ Academic Integrity Notice
 
